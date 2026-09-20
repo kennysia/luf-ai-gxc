@@ -8,7 +8,7 @@ Yong (GX Coordinator Kuching, Oct 2024 to date). Coverage: 1 Sep 2018 to 20 Sep 
 ## How to read this
 
 - **Identity note.** `cspyong@levelupfitness.com` returns nothing. Corina's addresses are `cspyong@yahoo.com` (receives policy mail, is LMAP's contact) and `corinayongsiawping@gmail.com` (sends the weekly timetables). Both were scanned.
-- **Coverage note.** Jayden's mailbox only existed from about Sep 2023 to Jan 2025 (it now bounces). Corina's threads run 2018 to 2026 because she was an instructor long before she coordinated. Orly's threads cover 2018 to 2023 (section 12 pending the final scan).
+- **Coverage note.** Jayden's mailbox only existed from about Sep 2023 to Jan 2025 (it now bounces). Corina's threads run 2018 to 2026 because she was an instructor long before she coordinated. Orly's threads cover 2018 to her retirement in March 2023 (section 12).
 - **Attachments were not readable.** Every RM rate table, the 2019 Rules and Policies document, the Class Booking Flow chart and the Sentinel cancellation guide exist only as attachments. Where a figure is quoted here it appeared in an email body.
 - **Status**: Rule = announced as standing policy. Applied = a decision applied to a case, which implies the rule. Proposal = raised but never confirmed in writing.
 - Thread ids are Gmail thread ids, searchable in the mailbox.
@@ -20,6 +20,8 @@ This is the consolidated position after reading everything. Each row points to t
 | Area | Current rule | Since | Evidence |
 |------|--------------|-------|----------|
 | Weekly timetable | Coordinator emails each outlet's timetable to its instructors, outlet PIC, Rodney and Marketing about 7 days ahead; instructors reply with changes by Wednesday 6pm; revisions go out as replies. Shared with outlets latest Thursday. | Thu deadline Sep 2024; Wed 6pm cutoff Feb 2025 | 1911d1e2a214adc6, Corina broadcasts (sec. 4) |
+| Class go / no-go | If bookings show 3 or more members 2 hours before class start, the class runs and the instructor is paid regardless of turnout. If 0 to 2, the class is cancelled and the instructor is not paid, even if walk-ins or the instructor turn up. Front desk staff who forget to cancel are reprimanded. Uniform across outlets. | 1 Jul 2022 | 181818c5d413cc2f, 181d1957557e7bd0 |
+| Booking-rate target | 70% booking across all classes is the performance target; instructors between 30 and 70% have their rate frozen; low-performing classes are swapped out. | 2022 | 17fff940b7367322, 184ccb473ee6f438 |
 | Booking window | Portal booking opens 77 h before class; portal cancellation cut-off 2 h before; front desk cancellation 1 h before; front desk can book until 1 minute before start if a slot is free. | Aug 2023 | 189ba1e38b2f982b |
 | Lateness and no-show | Not scanned in by class start = absence in the system, but the member may still join within a 5-minute grace. 3 absences in 2 consecutive weeks = 14-day booking suspension. Absence records auto-delete after 2 weeks. Penalty lifted if the entry system was in emergency mode (CCTV as evidence). | Apr 2024, clarified Jan 2025 | 18f1475ee731fd8b, 1927987b6ecafc45 |
 | Class cancellation | Done in Sentinel per the guide "GX CLASS CANCELLATION (SENTINEL SYSTEM).pdf"; last-minute changes go to the outlet PIC and front desk; system issues go to Rodney. | Feb 2026 | 19c38e5eecf33276, 192bd72d00dbf159 |
@@ -62,6 +64,11 @@ This is the consolidated position after reading everything. Each row points to t
 | Les Mills instructor grades: Uncertified; Rookie (under 1 yr certified, 1 LM programme); Established (1-3 yrs, 1 LM); Star (3-4 yrs, 2 LM or 1 LM + 1 freestyle); Superstar (4-8 yrs, 2 LM + 1 freestyle or 1 LM + 2 freestyle); Veteran (8+ yrs, 3 LM + 1 freestyle or equivalent). Freestyle-only grades by experience: Rookie under 1 yr, Established 1-3, Star 3-6, Superstar 6-9, Veteran 9+. From Q4 2023 the programme criteria apply in full: an instructor not meeting the programme mix is paid at the grade they do meet. | | Rodney | 27 Jul and 27 Sep 2023, same thread | Rule |
 | Pay is computed from member bookings in the booking system: "the total number of bookings will be counted and to determine the percentage for the rate of your conducted class." | | Rodney | 27 Jul and 14 Aug 2023, 189872c02d795f5c, 189ba1e38b2f982b | Rule |
 | Quarterly "Payment Summary (Quarterly Rate)" prepared by Jayden and approved by Kenny for Q4 2023, Q1 to Q4 2024; Q4 2024 changed only two instructors. Corporate classes count. | RM figures in xlsx only | Jayden, Kenny | 25 Oct 2023 to 2 Oct 2024: 18b658b9a66bcfae, 18cecc107f9880d7, 18f0a2adb8f2c8b7, 190c8b97649f8950, 1924c6668480f2ad | Applied, recurring |
+| **The 2022 GX Policy.** Negotiated over five months between Kenny (drafts) and Orly (redlines) as "GX Policy and Instructor Rates by 1st July 2022.xlsx". Stated goal: "not so much to reduce GX budget, but to ensure instructors take ownership... above 70% booking across all classes... low performance classes swapped out." Effective 1 Jul 2022: a class with 3 or more bookings 2 hours before start runs and is paid; 0 to 2 bookings, cancelled and unpaid (previously half rate). | 3 pax; 2 h; 70% | Kenny; acknowledged by outlet PICs "Noted and Team already briefed" | 6 Apr to 8 Sep 2022, 17fff940b7367322; 21 Jun 2022, 181818c5d413cc2f; 6 Jul 2022, 181d1957557e7bd0 | Rule |
+| Rate increases gated on the 70% target: instructors at 30 to 70% booking have their rate frozen (no increase, no cut). Named 2023 adjustments by category: Veteran RM70, Superstar RM65; two instructors held; one deferred to Q4 2023. | RM60 to RM70 per class | Orly to Kenny | 1 Dec 2022, 184ccb473ee6f438; 8 May 2023, 187fdbafb35548d6 | Applied |
+| Classes under one hour (GRIT, Sprint) are paid on "the same percentage as other freelance instructors", not a flat hourly rate. | | Kenny | 21 Feb 2023, 1861214b8132cb13 | Applied |
+| An instructor on a work permit is paid through a third-party company by monthly purchase order (RM80 per one-hour class to the company), never directly. | RM80 | Kenny; agreed by the company | 3-8 Feb 2023, 1861214b8132cb13 | Applied |
+| Class fees are paid one month in arrears with the following month's salary; the procedure is not moved up even for a departing employee. | | Rodney | 15-17 Mar 2023, 186e446717e6ca24 | Rule |
 | Relaunch classes: instructors paid full rate even when team-teaching. | | Orly | 16 Jun 2022, 1816d383e7f68a4b | Rule (2022) |
 | Draft part-time GX contract and revised rate cards (Les Mills and Freestyle) sent to Kenny; no reply in thread. | Attachments only | Jayden | 21 Mar 2024, 18e6004bb00d7cf8 | Proposal, unresolved |
 | Retired or non-teaching instructor may join as a member at RM168/month with the RM200 joining fee waived (Johnston 2023, offered to Ang 2024). | RM168; RM200 waived | Kenny | Oct 2023, 18afa4716ef4f31c; 20 Aug 2024, 1916e4f7f9ffe0df | Applied |
@@ -165,16 +172,36 @@ This is the consolidated position after reading everything. Each row points to t
 7. **Revised GX Policy document** requested Sep 2024 was never produced; the 2019 document remains the reference. This register is the nearest thing to a current consolidated policy.
 8. **Manual attendance inserts and front-desk cancellations inside 2 h** were called "not the right practice" twice with no SOP replacing them.
 9. **LMAP outstanding AUD 7,002.43** (Feb 2025) has no resolution in the threads.
-10. **Corina's Jan 2026 member complaint.** Kenny refers to "actions we have taken against Corina" in a reply to a member; the action is not documented in any thread found.
+10. **Two performance thresholds administered by different people.** The 70% booking target (Orly, 2022, for rate increases) and the "2 fixed classes a week plus no low-attendance cancellations" criteria (Rodney, 2023, for free access) were never reconciled in writing; since Jan 2025 both reviews run on the same quarterly cycle, so one scorecard should serve both.
+11. **Corina's Jan 2026 member complaint.** Kenny refers to "actions we have taken against Corina" in a reply to a member; the action is not documented in any thread found.
 
 ## 12. Orly Zapatos threads, 2018 to 2023
 
-Pending: the first scan of this mailbox was cut short by a usage limit. A second, narrower scan is running and this section will be filled from it.
+Orly was GX manager until she retired on 16 March 2023, handing GX administration to Rodney Frazer (meeting notes 6 Feb 2023, 18626456687b22db). Her threads supply the origin of most rules that Jayden and Corina later operated.
+
+| Policy | Figures and wording | Who | Date, thread | Status |
+|--------|---------------------|-----|--------------|--------|
+| The 2022 GX Policy and instructor rates (see section 3): 3 bookings 2 hours before start or the class is cancelled and unpaid; 70% booking target; low-performing classes swapped out. | 3 pax; 2 h; 70% | Kenny and Orly | Apr to Sep 2022, 17fff940b7367322, 181818c5d413cc2f, 181d1957557e7bd0 | Rule |
+| Latecomer rule under the 2022 policy: anyone more than 5 minutes after start is barred, and instructors must enforce it; it overrides "pay at counter" walk-ins. | 5 min | Cathleen Yip citing "the new GX policy" | 8 Jul 2022, 181dc66a9e17eb4f | Applied |
+| Relaunch convention set: every outlet relaunched in the same week, at least 2 instructors per relaunch class, programmes and instructors rotated across outlets, full rate for team-teaching; from Jan 2023 every licensed programme is relaunched in its usual slot. | | Orly | 16 Jun 2022, 1816d383e7f68a4b; 23 Dec 2022, 1853d5eb66b74365 | Rule |
+| GX schedule template redesigned with a standard footer "How to Enjoy Live Group Classes at Level Up", outlet email and Facebook handle. | 4 outlets | Kenny directed, Rodney executed | 14 Mar to 13 Apr 2023, 186df572742522bb | Applied |
+| BodyPump capacity at Vivacity raised from 15 to 18 with extra plates requisitioned. | 15 to 18 | Goretine and Orly; Kenny approved | 19-20 Feb 2023, 186686d46b6cefad | Applied |
+| Charity class capacities set per outlet and expanded on ticket sales (for example MetCon 10, Zumba 20, BodyCombat 18 to 21). | | Orly with outlet PICs | Sep to Oct 2022, 183207aab03d89cb | Applied |
+| Les Mills endorsement: LUF (as Gym Box) hosts trainees for shadow and team-teaching under a club mentor with no employment obligation either way; certification typically 3 to 4 months after training. | 3-4 months | LMAP request via Willie Ho | 20 Apr 2023, 1879cabf10cdfdf9 | Rule (external) |
+| Instructor free gym access policy issued during the handover (section 4). | | Rodney, cc Kenny and Orly | 28 Apr 2023, 187c71e81722a907 | Rule |
+| Mic headsets replaced ad hoc (Vivacity's previous new headset was April 2019, replaced Sep 2022), before the 1-year rule of Sep 2023. | | Orly, Maria | Sep 2022, 1838293b77528d90 | Historic |
+| Pre-online-booking era (2020): front desk kept name lists per class; overflow turned away; weather caps for outdoor classes. | 8-12 pax | Orly | Jun to Jul 2020, 172cfc67c6904d27 | Historic |
+| 2018 to 2019: crowd control at studio doors 10 minutes before class, reserved spots forfeited at start; Kenny stopped early studio locking and asked Orly to draft a reservation policy. That policy was not found and was overtaken by online booking. | 10 min | Becky, Kenny | 162423ae99e003b2, 16e83378a7d8646a | Historic |
+
+Attachments seen but not readable: "GX Policy and Instructor Rates by 1st July 2022.xlsx" and two revisions, "GX Revised Instructor Rates (Freestyle).xlsx", "(LesMills).xlsx", "GXReportQ32022.xlsx", "Kenny's Briefing Notes for Rodney.docx".
+
+Open point from this period: Kenny's email says the policy took effect 1 July 2022, while several August 2022 Monday-meeting feedback threads still describe it as upcoming, which suggests a staggered outlet rollout.
 
 ## 13. What this changes in the proposal
 
 - The policy table in `04-implementation-notes.md` now has a documented source for every value: the 77/2/1 booking windows, the 5-minute grace, 3 strikes in 2 weeks and 14-day suspension, 2 fixed classes a week, quarterly reviews in Jan/Apr/Jul/Oct, 3 Les Mills slots a week, 3 months' notice, 6-month trainee clearance, grey capacity +4/+1, mic 1-year rule, RM300 quarterly incentive, payroll by the 5th.
-- The pay model is settled: grade-based rates revised quarterly from booking performance, computed from bookings. Workflow W3 in the proposal drops the "flat vs tiered" uncertainty.
+- The pay model is settled: grade-based rates revised quarterly from booking performance, computed from bookings, with the 2022 go/no-go rule (3 bookings 2 hours before start, otherwise cancelled and unpaid). Workflow W3 in the proposal drops the "flat vs tiered" uncertainty, and the agent's daily 26-hour scan in W4 becomes a 2-hour-before check that can trigger the cancellation itself.
+- The poster's "2 or fewer bookings = class cancelled" is the same 2022 rule, so it has been stable for four years and is safe to automate.
 - The quarterly evaluation meeting, the Class Consistency Report and the per-outlet GX Issue Sheets already exist. The agent's W4 dashboard and W6 compliance checks should produce those exact artefacts rather than new ones.
 - Corina's weekly broadcast (Monday send, Wednesday 6pm cutoff, 2 to 4 revisions a week as reply-all emails with screenshots) is the process the W1 loop replaces. The revision count is the first metric to track.
 - Rodney Frazer, not the coordinator, owns policy communication, quarterly evaluations, payroll submission and the Sentinel cancellation workflow. He is the natural human owner for the agent's approvals.

@@ -36,11 +36,11 @@ content, but possible) degrades gracefully rather than failing the cron job.
 
 ## Schema (phase 1, Google Sheets tabs)
 
-**instructors**: id, name, phone (E.164), email, status (active/paused/offboarded), programmes (list), certifications (programme, body, expiry), availability (weekday, from, to), approved_rate (per class or tier table), free_membership (yes/no, last_reviewed), notes.
+**instructors**: id, name, phone (E.164), email, status (active/paused/offboarded), programmes (list), certifications (programme, body, expiry), availability (weekday, from, to), grade (Uncertified/Rookie/Established/Star/Superstar/Veteran, per the July 2023 scheme), approved_rate (per class at current grade, revised quarterly), free_access (yes/no, period, last_reviewed), notes.
 
 **slots** (the standing weekly template): slot_id, weekday, start, duration, studio, programme, default_instructor_id, capacity, active_from, active_to, seasonal_mode (normal/reduced).
 
-**policy**: key, value, effective_from, note. Seeded from `01-source-analysis.md` section 2: draft_day=Wed, publish_deadline=Thu 12:00, booking_open_hours=77, cancel_penalty_hours=2, online_close_hours=1, auto_cancel_max_bookings=2, late_entry_minutes=5, lesmills_min_classes_per_week=3, lesmills_notice_months=3, free_membership_min_classes=2, eligibility_review_months=1,4,7,10, payroll_deadline_day=5, qcc_pass_score=15, cover_search_window_hours=6.
+**policy**: key, value, effective_from, source_thread, note. Seeded from `01-source-analysis.md` section 2 and the email register in `05-agreed-gx-policies.md`: draft_send_day=Mon, instructor_change_cutoff=Wed 18:00, publish_deadline=Thu 12:00, booking_open_hours=77, cancel_penalty_hours=2, frontdesk_cancel_hours=1, online_close_hours=1, class_go_min_bookings=3, class_go_check_hours_before=2, cancelled_class_instructor_pay=0, late_entry_grace_minutes=5, member_strikes=3, member_strike_window_weeks=2, member_suspension_days=14, absence_record_retention_weeks=2, grey_capacity_non_equipment=4, grey_capacity_equipment=1, booking_rate_target_pct=70, lesmills_min_classes_per_week=3, lesmills_notice_months=3, trainee_clearance_months=6, free_access_min_classes=2, eligibility_review_months=1,4,7,10, rate_review_months=1,4,7,10, payroll_deadline_day=5, qcc_pass_score=15, mic_company_replace_after_months=12, incentive_budget_per_quarter_rm=300, cover_search_window_hours=6.
 
 **weeks**: week_start, status (draft/approved/published), approved_by, approved_at, published_at, diff_from_prev.
 

@@ -13,8 +13,9 @@ tracking.
 | [docs/02-industry-research.md](docs/02-industry-research.md) | Web research (2023-2026) on GX management practice at established operators, with sources |
 | [docs/03-proposal.md](docs/03-proposal.md) | The proposal: what the AI can own, what stays human, architecture, workflows, phases, costs, risks |
 | [docs/04-implementation-notes.md](docs/04-implementation-notes.md) | Build sheet: stack, schema, cron jobs, validation rules, integration questions |
+| [docs/05-agreed-gx-policies.md](docs/05-agreed-gx-policies.md) | Register of every GX policy agreed by email 2018 to 2026, from threads with Jayden Tian, Orly Zapatos and Corina Yong, with contradictions to settle |
 
 ## Status
 
-Proposal stage. No code yet. Phase 0 (foundations) starts once PerfectGym API access and a
-human owner are confirmed. See section 7 of the proposal for the full list of inputs needed.
+Proposal stage. No code yet. The booking platform is Sentinel Fitness (Scope Software Solutions).
+Phase 0 starts once Scope answers the API or export request and a human owner is named. See section 7 of the proposal for the full list of inputs needed.
