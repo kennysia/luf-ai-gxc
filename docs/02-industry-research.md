@@ -208,3 +208,94 @@ All from operators' own policy or FAQ pages via snippet [P] unless marked. Polic
 58. https://www.tandfonline.com/doi/full/10.1080/11745398.2026.2615917 - academic study of Les Mills instructors (2026). [P]
 59. https://www.bls.gov/ooh/personal-care-and-service/fitness-trainers-and-instructors.htm - BLS outlook. [P]
 60. https://wexer.com/blog/2024-group-fitness-trends/ - UK instructor shortage. [S]
+
+## 7. Tooling research: AI in club operations, messaging, LUF's platform, backend options
+
+This section comes from a second research pass focused on the build. Same tagging as above. Pages
+read in full are marked [F]; the rest are snippet-derived.
+
+### 7.1 AI agents actually deployed in club operations
+
+- **Everything deployed today is member-facing.** No vendor or case study was found where an AI agent handles instructor sub coverage, weekly availability or roster confirmation. Staff coordination is still done with conventional workflow tools or human virtual assistants. An LLM-driven instructor coordinator would be novel. [S]
+- ABC Fitness acquired Replify (July 2026) for agentic lead handling; earlier shipped an AI churn predictor and AI workout builder. Reported results (10x leads, 65% of call volume automated) are vendor claims. [S/U] (Sources 61, 62)
+- **PushPress AI Assistant** (controlled beta late 2025, wider rollout 2026): plain-text prompts to manage plans and book recurring classes for review. No quantified results. [S] (Source 65)
+- Les Mills corporate uses AI for churn-propensity targeting and instructor discovery (Les Mills Connect lists instructors by programme, location and teaching availability with verified certification). [S] (Source 74)
+- Staff-side non-AI tools worth copying: **ClassSub** shows a manager "coverage health" (share of classes covered 24 h or more ahead, still-open requests) and per-instructor cover rate, confirmed rate and no-shows, and is pitched explicitly as the cure for "group-chat chaos". **GroupEx PRO** runs sub requests through an approval workflow with cost-per-head reporting. [S] (Sources 18, 19 in this section's list: 72, 73)
+
+### 7.2 WhatsApp Business Platform vs Telegram for instructor coordination
+
+**WhatsApp Cloud API, Malaysia** [S, several vendors agree]
+- Per-message pricing since 1 July 2025. Malaysia base rates: marketing RM 0.35, utility RM 0.056, authentication RM 0.056 per template message. Replies inside a 24-hour service window are free today. (Sources 66, 67)
+- From 1 October 2026: utility templates inside the 24-hour window become billable, and each business number gets 1,000 free service messages a month. (Source 68)
+- Business Service Provider platform fees on top of Meta rates run roughly RM 150-1,200 a month (Wati about RM 299, SleekFlow about RM 469, respond.io USD 79). Going direct to the Cloud API avoids the fee but you host the webhook. (Source 69)
+- Onboarding needs Meta Business Verification (SSM certificate, utility bill or bank statement in the company name, matching website and domain email). A number cannot be on both the WhatsApp Business app and the API, so a fresh number is normal. New accounts start with a business-initiated conversation cap that rises with quality rating. (Source 70)
+- Hard rules: business-initiated messages must be pre-approved templates; explicit opt-in is required; free-form replies only inside the 24-hour window.
+- **Groups API**: available only to green-tick Official Business Accounts, groups capped at 8 members, no add-participant endpoint, cannot read member-created groups. A 30-instructor broadcast group cannot be driven from the API, which confirms the one-to-one design. (Source 71)
+- **WhatsApp Flows** (in-chat forms) suit weekly availability collection: multi-select days and slots, dynamic lists from the backend.
+
+Cost sketch for 30-40 instructors: one weekly availability template, confirmations and ad-hoc cover broadcasts is roughly 300-600 utility messages a month, about RM 17-34 in Meta fees. The BSP subscription dominates unless LUF goes direct to the Cloud API.
+
+**Telegram Bot API** [P]
+- Free. Non-anonymous polls with multiple answers and auto-close, inline "Confirm" and "I can cover" buttons, works in private chats. Rate limits of about 30 messages a second bot-wide are irrelevant at club scale. (Source 75)
+- Open-source precedents: an aiogram 3 bot using Claude plus PostgreSQL and Google Sheets sync with role-based access and a shift-management module [F] (Source 76); a weekly recurring reminder bot [F] (Source 77).
+- Downside: instructors must install a second app. In Malaysia WhatsApp is near-universal; Telegram adoption is decent but not guaranteed.
+
+### 7.3 Level Up Fitness's booking platform
+
+**Finding: PushPress, high confidence but not directly verified.** The Google Play package for the Level Up Fitness app is `com.pushpress.levelupfitness`, the naming pattern of PushPress's white-label branded member app, and search snippets of `members.levelupfitness.com` describe it as a PushPress client portal. The 2022 briefing notes reference PerfectGym (`levelup.perfectgym.pl`), so LUF appears to have migrated between 2023 and 2026. The sandbox proxy blocked direct reads of both domains; Kenny can confirm in seconds. (Sources 63, 64)
+
+**PushPress Platform API v3** (primary source: the TypeScript SDK README v1.15.0, April 2026, read in full [F]) (Sources 78-80)
+- Base `https://api.pushpress.com/v3`, OpenAPI 3.1, `API-KEY` plus `company-id` headers (one key per location for multi-site gyms). TypeScript and PHP SDKs.
+- **Read endpoints** that matter: `classes.list/get`, `classes.type.list/get`, `reservations.list/get` (bookings), `checkins.class.list/get` (attendance), `checkins.count`, `customers.*`, `enrollment.*`, `events.*`, `company.get`.
+- **Outbound messaging endpoints**: `messages.email.send`, `messages.sms.send`, `messages.push.send`. The agent can notify booked members through PushPress itself.
+- **Webhooks**: signed JSON for `checkin.created/updated/deleted`, `class.canceled`, `reservation.created`, `appointment.noShowed`, `customer.*`, `enrollment.created`.
+- **Gaps that shape the design**: no write endpoints for classes, coach assignment or reservations. The agent can read the schedule and bookings but cannot create a class, reassign a coach or cancel a class via API. No waitlist endpoint found. Whether the Class object exposes coach and capacity is unverified (docs page blocked). Zapier and PushPress Grow add triggers ("Class Registered", "Late Cancel") but no "set coach" action.
+- PushPress AI Assistant can already book recurring classes from a text prompt, which may become a semi-official publishing path if PushPress exposes it programmatically.
+
+Consequence: **publishing the weekly timetable and assigning instructors stays a browser or manual step** until PushPress adds write endpoints. The agent prepares the exact change list; a human (or a Playwright script under the human's login) applies it in PushPress Core. Everything else in the proposal (reading, analytics, cover routing, member notification, payroll) is API-supported.
+
+### 7.4 Google Workspace and low-code backends
+
+- Apps Script can call the Claude API directly with `UrlFetchApp`; store the key in `PropertiesService`. [F] (Source 81) Quotas: 6-minute execution cap, 20,000 UrlFetch calls a day (100,000 on Workspace), 20 time-driven triggers per script. The weekly roster job must be chained, not one long call. (Source 82)
+- n8n has ready templates for exactly this shape: WhatsApp webhook, Claude intent classification, Google Sheets read and write, WhatsApp reply, Telegram alert to the owner. (Source 83) Make and Zapier have first-party Claude, WhatsApp Cloud, Telegram and Sheets modules. (Source 84)
+- Claude can also read and write Sheets as tools through a Google Sheets MCP server. (Source 85)
+
+### 7.5 Instructor quality frameworks (detail)
+
+- **Les Mills Qualifications (LMQ)**: five Key Elements (Choreography, Technique, Coaching, Connection, Performance), each graded 1-3 (Choreography 1-2). Grade combinations give a Level. Coaching is split into Layer 1 (clear what, where, how) and Layer 2 (motivational and educational). Assessment is a full-class video within 60 days of training, results in 14 days, three attempts. (Sources 37, 38 [F])
+- LUF's Les Mills instructors already receive these grades. Aligning the club-side QCC to the same five dimensions means the club audit and the Les Mills assessment speak the same language.
+- ACE core skills for group instructors: counting, cueing, demonstrating, offering modifications, motivating; recommends video self-assessment and post-class questions. (Source 86)
+- AUSactive requires 20 CECs per 24 months plus current first aid for registered group instructors; observed sessions earn credit. CIMSPA publishes a Core Group Exercise Instructor professional standard (content not extracted). (Sources 87, 88)
+- No AI class-evaluation product exists for GX. Form-analysis tools exist for individual exercise, not for a 20-person studio.
+
+### Additional sources (section 7)
+
+61. https://abcfitness.com/press-release/abc-fitness-acquires-replify-agentic-ai/ - ABC acquires Replify. [S]
+62. https://abcfitness.com/abc-articles/abc-ai-agents/ - ABC AI agents. [S]
+63. https://play.google.com/store/apps/details?id=com.pushpress.levelupfitness - Level Up Fitness app package id. [S, blocked]
+64. https://members.levelupfitness.com/ - LUF client portal. [blocked]
+65. https://www.pushpress.com/blog/2025-the-year-pushpress-hit-a-pr - PushPress AI Assistant. [S]
+66. https://whautomate.com/whatsapp-business-api-pricing-malaysia - WhatsApp Malaysia rates. [S]
+67. https://developers.facebook.com/documentation/business-messaging/whatsapp/pricing - Meta pricing. [P, blocked]
+68. https://respond.io/blog/whatsapp-pricing-change-2026 - October 2026 pricing change. [S]
+69. https://thecrunch.io/whatsapp-api-pricing-malaysia/ - BSP fees Malaysia. [S]
+70. https://zenweb.my/blog/whatsapp-business-api-malaysia/ - Malaysian onboarding requirements. [S]
+71. https://www.imbee.io/resource/whatsapp-groups-api-business-guide-2026 - Groups API limits. [S]
+72. https://classsub.inpulsd.com/ - ClassSub coverage metrics. [S]
+73. https://groupexpro.com/ - GroupEx PRO. [S]
+74. https://www.lesmills.com/clubs-and-facilities/les-mills-connect - Les Mills Connect. [S]
+75. https://core.telegram.org/bots/api - Telegram Bot API. [P]
+76. https://github.com/Udalovski/ai-recruitment-telegram-bot - aiogram + Claude + Sheets bot. [F]
+77. https://github.com/zavidnyi/telegram-scheduler-bot - recurring reminder bot. [F]
+78. https://www.npmjs.com/package/@pushpress/pushpress - PushPress TypeScript SDK README v1.15.0. [F]
+79. https://ppe.apidocumentation.com/ - PushPress API docs. [blocked]
+80. https://github.com/api-evangelist/pushpress - PushPress API profile. [F]
+81. https://gist.github.com/estevecastells/08ffa9064b57ab34a622dee16c32b629 - Claude from Apps Script. [F]
+82. https://developers.google.com/apps-script/guides/services/quotas - Apps Script quotas. [P]
+83. https://n8n.io/workflows/16482-book-reschedule-and-confirm-whatsapp-appointments-with-claude-and-sheets - n8n WhatsApp + Claude + Sheets template. [S]
+84. https://www.make.com/en/integrations/whatsapp-business-cloud/anthropic-claude - Make modules. [S]
+85. https://composio.dev/toolkits/googlesheets/framework/claude-agents-sdk - Sheets tools for Claude agents. [S]
+86. https://www.acefitness.org/resources/pros/expert-articles/7982/the-power-of-feedback-assessing-your-group-fitness-instructional-skills/ - ACE feedback article. [S]
+87. https://ausactive.org.au/membership/group_exercise_instructor/ - AUSactive GEI registration. [S]
+88. https://www.cimspa.co.uk/globalassets/document-downloads-library-all/education-and-training/prof-standards-and-mts/cimspa-ps-core-group-exercise-instructor-v1.0.pdf - CIMSPA standard. [blocked]
+89. https://s3.amazonaws.com/lesmills.portalcontent/OrchestraCMS/a141a000000yE88AAE.pdf - Les Mills US Instructor Guide. [F]

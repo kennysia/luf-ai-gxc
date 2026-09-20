@@ -6,19 +6,19 @@ Technical detail behind `03-proposal.md`. This is the build sheet for phase 0 an
 
 | Layer | Choice | Why |
 |-------|--------|-----|
-| Language | Python 3.11+ | Best fit for n8n custom nodes, PerfectGym API clients, Playwright fallback |
+| Language | Python 3.11+ | Best fit for n8n custom nodes, the PushPress API, Playwright fallback |
 | LLM | Claude Opus 5 (`claude-opus-5`) with adaptive thinking; Claude Haiku 4.5 (`claude-haiku-4-5`) optional for bulk message classification | Opus 5 for judgement-heavy drafting and anomaly review; Haiku for cheap high-volume parsing |
 | Orchestration | n8n (self-hosted) | Cron triggers, WhatsApp and HTTP nodes, visual audit trail a non-developer can read |
-| Messaging | WhatsApp Business Platform via a BSP (Twilio or 360dialog); Telegram Bot API as fallback adapter | Instructors already on WhatsApp; per-conversation pricing is trivial at this volume |
+| Messaging | WhatsApp Cloud API (direct, or via a Malaysian BSP such as Wati or SleekFlow); Telegram Bot API as the alternative adapter | Instructors already on WhatsApp; Meta per-message fees are trivial, the BSP fee is not; Telegram is free and has polls and buttons |
 | Data | Google Sheets (phase 1) then Postgres | Kenny and Yen edit rates and roster directly; migrate when a second club joins |
-| Booking system | PerfectGym (`levelup.perfectgym.pl`, member portal `members.levelupfitness.com`) | Source of truth for classes, bookings, attendance, waitlists |
-| Publishing | PGM API or Playwright; Facebook Graph API page post; Foyer signage upload; timetable image rendered from an HTML template | One-click publish to all three surfaces |
+| Booking system | PushPress (member portal `members.levelupfitness.com`, app package `com.pushpress.levelupfitness`); the 2022 notes reference PerfectGym, so confirm | Source of truth for classes, reservations, check-ins, members; read-only API for classes |
+| Publishing | PushPress change list applied by the human or by Playwright under their login; Facebook Graph API page post; Foyer signage upload; timetable image rendered from an HTML template | One-click publish to Facebook and Foyer; PushPress write stays human-triggered |
 
 ## Claude API usage pattern
 
 Every agent step is a single `messages.create` call with tools, or a short tool-runner loop. No
 long-lived agent sessions are needed for phase 1; each cron job is stateless and reads its state
-from PGM and the policy sheet.
+from PushPress and the policy sheet.
 
 Pricing reference (Anthropic first-party rates, per million tokens): Opus 5 USD 5 in / 25 out;
 Haiku 4.5 USD 1 in / 5 out. A weekly timetable draft with roster, policy and last 4 weeks of KPIs
@@ -44,7 +44,9 @@ content, but possible) degrades gracefully rather than failing the cron job.
 
 **weeks**: week_start, status (draft/approved/published), approved_by, approved_at, published_at, diff_from_prev.
 
-**classes** (the published instance): class_id, week_start, slot_id, instructor_id, cover_instructor_id, status (scheduled/covered/cancelled), pgm_class_id, bookings, attended, no_shows, late_cancels, waitlist_max.
+**classes** (the published instance): class_id, week_start, slot_id, instructor_id, cover_instructor_id, status (scheduled/covered/cancelled), pushpress_class_id, bookings, attended, no_shows, late_cancels, waitlist_max.
+
+**publish_changes**: week_start, change_id, action (add/remove/reassign/retime), slot_id, from_value, to_value, applied_by, applied_at. This is the change list the human applies in PushPress Core; the agent verifies it by re-reading the classes endpoint afterwards.
 
 **qcc_audits**: audit_id, instructor_id, assessor, date, programme, items 1-20 (0/1), score, pass, strengths, improvements, acknowledged.
 
@@ -74,24 +76,36 @@ content, but possible) degrades gracefully rather than failing the cron job.
 - Seasonal mode matches the calendar (December and the fortnight before CNY use the reduced template unless overridden).
 - Diff against the previous published week is attached.
 
-## PerfectGym integration: what phase 0 must establish
+## PushPress integration: what is known and what phase 0 must establish
 
-1. Whether LUF's PerfectGym contract includes API access (PerfectGym exposes a REST API to clients on request; scope varies by plan).
-2. Read endpoints needed: classes by date range, bookings and attendance per class, waitlist, class types (to exclude PT-led classes).
-3. Write endpoints needed: create or update class instances (instructor, time, capacity), cancel class with member notification.
-4. If write is unavailable: agent produces the CSV/table in PGM's import format and a Playwright script performs the upload under the human's login on their click.
+Known from the PushPress TypeScript SDK README v1.15.0 (April 2026):
+
+- Base `https://api.pushpress.com/v3`, `API-KEY` plus `company-id` headers, one company id per club.
+- Read: `classes.list/get`, `classes.type.list/get`, `reservations.list/get`, `checkins.class.list/get`, `checkins.count`, `customers.*`, `enrollment.*`, `events.*`, `company.get`.
+- Send: `messages.email.send`, `messages.sms.send`, `messages.push.send` (member notifications for covers and cancellations).
+- Webhooks: `class.canceled`, `reservation.created`, `checkin.created/updated/deleted`, `appointment.noShowed`, `customer.*`, `enrollment.created`. Signed JSON; secret rotation supported.
+- Not available: create or update class, assign coach, cancel class, waitlist read.
+
+Phase 0 must establish:
+
+1. That PushPress is indeed the live platform (the 2022 notes say PerfectGym).
+2. Whether the Class object returned by `classes.list` includes coach or staff id and capacity. If not, the roster sheet carries the intended instructor and the agent reconciles against check-ins.
+3. Whether reservation objects carry a waitlist or late-cancel status, or whether those come only via Grow triggers.
+4. Whether the club's PushPress plan allows API key creation from settings.
+5. Whether the human owner is comfortable with a Playwright script applying the change list under their login, or prefers to apply it by hand (about 5-10 minutes a week).
 
 ## Security and confidentiality
 
 - Instructor rates and phone numbers are stored only in LUF's Google Workspace / database. Prompts receive instructor IDs and first names plus the minimum fields the task needs; rates enter the prompt only for the payroll job.
-- API keys and PGM credentials live in n8n's credential store or environment variables, never in a sheet or a prompt. The Fitbox Virtual credentials written in the 2022 briefing notes should be rotated.
+- API keys and PushPress credentials live in n8n's credential store or environment variables, never in a sheet or a prompt. The Fitbox Virtual credentials written in the 2022 briefing notes should be rotated.
 - Every outbound message and every publish action is logged with who approved it.
 - Model calls go to the Claude API under Anthropic's commercial data terms (30-day retention on current models). If LUF requires zero retention, confirm eligibility with Anthropic before phase 1.
 
 ## Open technical questions for Level Up Fitness
 
-1. PerfectGym API availability and scope on the current plan.
+1. PushPress API key and confirmation of the Class object fields (coach, capacity).
 2. Whether the Foyer signage system accepts an image upload via URL or API, or needs a manual upload.
 3. Facebook page admin access for the Graph API app.
-4. Whether HQ payroll wants a spreadsheet, a PDF, or a PGM export format.
+4. Whether HQ payroll wants a spreadsheet, a PDF, or a PushPress export format.
 5. Pay model in force today (flat per class vs booking-tiered).
+6. WhatsApp: does LUF already have a verified Meta Business account and a spare number? If not, Telegram is the faster pilot channel.
