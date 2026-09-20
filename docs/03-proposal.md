@@ -9,7 +9,7 @@ What the documents say the job is, split by whether software can own it:
 
 | Software can own it | Software can assist, a human must own it |
 |---------------------|------------------------------------------|
-| Collect availability, draft the weekly timetable, chase confirmations, publish to PushPress / Foyer / Facebook | Deciding to drop an instructor, a programme or a Les Mills licence |
+| Collect availability, draft the weekly timetable, chase confirmations, publish to Sentinel / Foyer / Facebook | Deciding to drop an instructor, a programme or a Les Mills licence |
 | Detect an absence, rank qualified covers, broadcast the ask, notify booked members | Persuading a reluctant instructor to cover at short notice |
 | Compile payroll from attendance and rate tables, flag anomalies, produce the report by the 5th | Approving payroll and signing off rate changes (Kenny and Yen) |
 | Track fill rate, attendance, no-shows, late cancels, Les Mills minimums; recommend slot changes | Sitting in the management meeting and owning the P&L decision |
@@ -26,7 +26,7 @@ operation across City Mall KK and future outlets, it does.
 
 ## 1. Design principles
 
-1. **The booking system is the source of truth.** Classes, bookings, attendance and members already live in PushPress (the 2022 notes say PerfectGym; the current portal appears to be PushPress, to be confirmed). The agent reads from it via API and never keeps a parallel spreadsheet of bookings. Because the PushPress public API is read-only for classes and coach assignment, the agent prepares publish changes and a human or a browser script applies them.
+1. **Sentinel is the source of truth.** Classes, bookings, waitlists, attendance and members already live in Sentinel (Scope Software Solutions), which replaced PerfectGym in mid-2025. The agent never keeps a parallel spreadsheet of bookings. Sentinel has no public API, so the agent reads through whatever channel Scope grants (partner API, scheduled report exports, or a browser session) and prepares publish changes that a human or a browser script applies in the Sentinel portal or the Level Up Trainers app.
 2. **One-to-one messaging, never a group.** Kenny's 2022 note against a WhatsApp group is right, and the platform agrees: the WhatsApp Groups API caps groups at 8 members and cannot add participants, so a broadcast group could not be automated anyway. The agent talks to each instructor individually via WhatsApp (or Telegram as a cheaper fallback). Adding or removing an instructor is invisible to the others.
 3. **Human-in-the-loop on every irreversible action.** Publishing a timetable, confirming a cover, sending a member broadcast, submitting payroll: each is a one-tap approval by the human owner. The agent prepares, the human releases.
 4. **Policy as data, not prose.** Every rule in `01-source-analysis.md` section 2 lives in a versioned policy file the agent reasons over. Change the rule, not the code.
@@ -50,12 +50,12 @@ operation across City Mall KK and future outlets, it does.
                       +---+----------+---------+--+
                           |          |         |
         +-----------------v-+  +-----v------+  +v-------------------+
-        | PushPress API v3  |  | Policy +   |  | Publishing adapters |
-        | (read) classes,   |  | instructor |  | PushPress change    |
-        | reservations,     |  | roster DB  |  |  list + Playwright  |
-        | check-ins,        |  | (Sheets or |  | Foyer signage       |
-        | webhooks; (send)  |  |  Postgres) |  | Facebook page post  |
-        | email/SMS/push    |  +------------+  | timetable image     |
+        | Sentinel adapter  |  | Policy +   |  | Publishing adapters |
+        | partner API if    |  | instructor |  | Sentinel change     |
+        | granted; else     |  | roster DB  |  |  list + Playwright  |
+        | scheduled report  |  | (Sheets or |  | Foyer signage       |
+        | exports (CSV /    |  |  Postgres) |  | Facebook page post  |
+        | email) + browser  |  +------------+  | timetable image     |
         +-------------------+                  +---------------------+
                                      |
                         +------------v-------------+
@@ -69,7 +69,7 @@ operation across City Mall KK and future outlets, it does.
 **Model.** Claude via the Claude API. Claude Opus 5 (`claude-opus-5`) for the reasoning steps:
 schedule drafting, cover ranking, payroll anomaly review, dashboard commentary. Claude Haiku 4.5
 (`claude-haiku-4-5`) as an optional cheaper worker for high-volume, low-stakes message parsing
-(classifying an instructor's "YES" or "swap me to 7pm"). Tool use against the PushPress API and
+(classifying an instructor's "YES" or "swap me to 7pm"). Tool use against the Sentinel adapter and
 the policy store, with structured outputs so the timetable draft is always valid JSON that the
 validator can check. See `docs/04-implementation-notes.md` for model IDs, pricing and integration
 detail.
@@ -91,14 +91,20 @@ can be swapped in.
 qualifications, policy table) because Kenny and Yen can edit it directly. Move to Postgres when a
 second outlet comes on.
 
-**Publishing.** The PushPress v3 API exposes classes, reservations and check-ins for reading and
-email, SMS and push for sending, but has no endpoints to create a class, assign a coach or cancel a
-class. So the timetable write is the one step that stays outside the API: the agent produces an
-exact change list ("Thu 7pm BodyPump: coach X to Y; add Sat 9am BodyBalance"), and either the
-human applies it in PushPress Core in a few minutes or a Playwright script does it under the
-human's login on their click. If PushPress later exposes its AI Assistant's recurring-class booking
-programmatically, that becomes the direct path. Foyer signage and Facebook take a generated
-timetable image rendered from an HTML template so branding stays consistent.
+**Sentinel integration, in order of preference.** Sentinel's vendor lists an API and third parties
+(Keepme, FitnessKPI) integrate with it, but nothing is documented publicly. Phase 0 therefore opens
+with a written request to Scope Software Solutions for one of:
+
+1. A partner API or read-only database view covering classes, instructors, bookings, waitlists and attendance, plus class creation and instructor assignment if they offer it.
+2. Failing that, scheduled report exports: Sentinel advertises scheduled and ad hoc reports and a "data extract for commission purposes". A nightly CSV of classes, bookings and attendance emailed to a mailbox the agent reads is enough for every analytics, payroll and cover workflow.
+3. Failing both, a Playwright browser session under a staff login that reads the portal's GX calendar and booking lists. This is the least robust option and is treated as a stopgap.
+
+**Publishing.** Whatever the read channel, the timetable write stays outside the API until Scope
+confirms a write endpoint: the agent produces an exact change list ("Thu 7pm BodyPump: coach X to
+Y; add Sat 9am BodyBalance"), and either the human applies it in the Sentinel portal or the Level
+Up Trainers app in a few minutes, or a Playwright script does it under the human's login on their
+click. Foyer signage and Facebook take a generated timetable image rendered from an HTML template
+so branding stays consistent.
 
 ## 3. The workflows, one by one
 
@@ -110,7 +116,7 @@ timetable image rendered from an HTML template so branding stays consistent.
 | Tue 18:00 | Chase non-responders once. Parse free-text replies (swaps, unavailability, requests). | none |
 | Wed 09:00 | Draft the timetable: standing roster + confirmed changes, checked against policy (Les Mills minimums, no clashes, studio capacity, seasonal mode, no new instructor without approved rate). Attach a delta list ("2 changes from last week") and any flags ("BodyBalance drops to 2 classes; licence minimum is 3"). | Review draft on a web page or in WhatsApp; approve, or edit and approve |
 | Wed-Thu | Send each instructor their confirmed slots; collect final confirmations. | none |
-| Thu 12:00 | Publish: produce the PushPress change list (or run the browser script), render the timetable image, post to Facebook, push to Foyer. Confirm back to the human with links. | Apply the change list in PushPress Core, or one-tap run the script; one-tap "publish" if any late change came in after approval |
+| Thu 12:00 | Publish: produce the Sentinel change list (or run the browser script), render the timetable image, post to Facebook, push to Foyer. Confirm back to the human with links. | Apply the change list in Sentinel, or one-tap run the script; one-tap "publish" if any late change came in after approval |
 | Thu 12:30 | If any class is unconfirmed by an instructor, escalate to the human with cover candidates already ranked. | Decide |
 
 Measured by: on-time publish rate (target 100%), confirmation latency, human minutes per week.
@@ -118,23 +124,23 @@ Measured by: on-time publish rate (target 100%), confirmation latency, human min
 ### W2. Cover and substitution
 
 Trigger: instructor messages "can't make Thursday 7pm", or the human forwards a message, or a class
-in PushPress has no instructor assigned within 48 h.
+in Sentinel has no instructor assigned within 48 h.
 
 1. Agent identifies the class, programme and time.
 2. Ranks candidate covers from the roster: qualified for that programme (certification on file), not already teaching in that slot, historically reliable, within approved rate.
 3. Broadcasts a 1:1 ask to the top 3 candidates in parallel, first to accept wins; escalates to the next 3 after 30 minutes.
-4. On acceptance: tells the original instructor, tells the Club Manager with the one-line PushPress change to apply, and drafts the member notification ("Your BodyPump Thu 7pm will be taught by X") for release through PushPress push or SMS.
+4. On acceptance: tells the original instructor, tells the Club Manager with the one-line Sentinel change to apply, and drafts the member notification ("Your BodyPump Thu 7pm will be taught by X") for release through Sentinel's email or SMS alerts, or the agent's own WhatsApp channel if members opt in.
 5. If no cover within the policy window (say 6 hours before class): recommends cancel-and-notify with the booked-member list, and the human decides.
 
 Measured by: time-to-cover, classes cancelled for lack of instructor, member notifications sent before class.
 
 ### W3. Monthly payroll
 
-1. On the 1st: pull all classes taught in the prior month from PushPress (classes plus class check-ins) with instructor, programme, headcount, attended count.
+1. On the 1st: pull all classes taught in the prior month from the Sentinel export (classes plus attendance) with instructor, programme, headcount, attended count. Sentinel's "data extract for commission purposes" may already be this report.
 2. Apply the rate table (flat per class, or booking-tiered if that model is live). Add the coordinator's own fee line.
 3. Anomaly flags: class taught but not on published timetable, instructor paid for a class with zero attendance, rate differs from approved rate, cover taught but original instructor still listed.
 4. Produce the payroll pack (spreadsheet + summary) by the 3rd; human reviews and submits to HQ Admin by the 5th.
-5. Handle verification questions from HQ by pointing at the underlying PushPress records.
+5. Handle verification questions from HQ by pointing at the underlying Sentinel records.
 
 Measured by: on-time submission, number of corrections after submission.
 
@@ -155,14 +161,14 @@ rule "retire an underperforming slot before adding a new one".
 - Maintain the audit calendar: every active instructor audited at least twice a year, new instructors at weeks 2 and 8.
 - Digitise the 20-point QCC as a mobile form the assessor fills in the studio; the agent stores it, computes the score, tracks history, and drafts the feedback message in the constructive tone the JD asks for.
 - On a fail (below 15), schedule the re-audit and a mentor pairing automatically.
-- Items 1-5 and 15-20 (pre and post class logistics) can be partly evidenced from data: class started on time can be checked against PushPress check-ins; the rest still needs the assessor.
+- Items 1-5 and 15-20 (pre and post class logistics) can be partly evidenced from data: class started on time can be checked against Sentinel attendance; the rest still needs the assessor.
 - Recommended upgrade to the QCC: keep the 20 binary items, but grade the six "during class" items on the Les Mills Qualifications scale (Choreography, Technique, Coaching, Connection, Performance) so the club audit uses the same vocabulary the instructors already get from Les Mills, and so the score separates competent from excellent. Details in `02-industry-research.md` section 7.5.
 
 The observation itself stays human. The paperwork, scheduling and follow-through become automatic.
 
 ### W6. Policy compliance and reminders
 
-- Quarterly (Jan/Apr/Jul/Oct): compute each instructor's regular classes per week and flag free-membership eligibility changes for the human to action in PushPress.
+- Quarterly (Jan/Apr/Jul/Oct): compute each instructor's regular classes per week and flag free-membership eligibility changes for the human to action in Sentinel.
 - Weekly: check Les Mills programme counts against the 3-class minimum; warn 3 months ahead of any licence renewal decision.
 - Onboarding: send the mic SOP, booking policy and studio SOP to every new instructor and record acknowledgement.
 - Seasonal mode: switch to the reduced December / pre-CNY template on a configurable date and post the "temporary schedule" notice.
@@ -171,17 +177,17 @@ The observation itself stays human. The paperwork, scheduling and follow-through
 
 - Collect instructor feedback on studio, equipment and members via a monthly 1:1 prompt; classify and summarise into the management meeting pack.
 - Prepare the weekly management meeting agenda from the dashboard, cover incidents, and open issues.
-- Event support: for a launch or themed class, produce the checklist (timetable slot, PushPress class creation, Facebook post, signage, instructor briefing) and track it.
+- Event support: for a launch or themed class, produce the checklist (timetable slot, Sentinel class creation, Facebook post, signage, instructor briefing) and track it.
 
 ## 4. Phased delivery
 
 | Phase | Weeks | Scope | Exit criterion |
 |-------|-------|-------|----------------|
-| 0. Foundations | 1-2 | Confirm the live platform (PushPress) and obtain an API key; verify the Class object exposes coach and capacity; load instructor roster, rates, qualifications and policy table; provision the messaging channel; name the human owner | Agent can read this week's timetable and check-ins and message one test instructor |
-| 1. Timetable loop | 3-6 | W1 end to end, with human approval. PushPress change list applied by the human (Playwright automation optional); Facebook and Foyer via generated image | 4 consecutive weeks published by Thursday with under 30 min of human time per week |
-| 2. Cover + dashboard | 7-10 | W2 and W4 | Median time-to-cover under 2 h; dashboard used in the management meeting |
-| 3. Payroll | 11-13 | W3 | Two consecutive months submitted by the 5th with zero post-submission corrections |
-| 4. Quality + compliance | 14-18 | W5, W6, W7 | Every active instructor has a QCC record; quarterly eligibility review runs automatically |
+| 0. Foundations | 1-3 | Written request to Scope for API or export access, and a decision on the read channel; load instructor roster, rates, qualifications and policy table; provision the messaging channel; name the human owner | Agent can read this week's timetable and attendance through the chosen channel and message one test instructor |
+| 1. Timetable loop | 4-7 | W1 end to end, with human approval. Sentinel change list applied by the human (Playwright automation optional); Facebook and Foyer via generated image | 4 consecutive weeks published by Thursday with under 30 min of human time per week |
+| 2. Cover + dashboard | 8-11 | W2 and W4 | Median time-to-cover under 2 h; dashboard used in the management meeting |
+| 3. Payroll | 12-14 | W3 | Two consecutive months submitted by the 5th with zero post-submission corrections |
+| 4. Quality + compliance | 15-19 | W5, W6, W7 | Every active instructor has a QCC record; quarterly eligibility review runs automatically |
 | 5. Second outlet | later | Multi-club support, per-club policy | Same agent runs two clubs with one human owner |
 
 ## 5. Costs (order of magnitude)
@@ -192,7 +198,7 @@ The observation itself stays human. The paperwork, scheduling and follow-through
 | WhatsApp: Meta per-message fees | RM 17-34/month at 300-600 utility messages |
 | WhatsApp: BSP subscription | RM 150-470/month (zero if LUF integrates the Cloud API directly, or if Telegram is used) |
 | n8n self-hosted on a small VPS | USD 5-15/month |
-| Build effort | Phase 0-1 roughly 3-4 weeks of one developer; phases 2-4 another 6-8 weeks; add 1 week if the Playwright publishing script is wanted |
+| Build effort | Phase 0-1 roughly 4-5 weeks of one developer; phases 2-4 another 6-8 weeks; add 1-2 weeks if Scope grants nothing and the browser adapter is needed |
 | Ongoing human owner | 2-4 h/week for approvals, applying the publish change list, cover decisions and audits (down from 8-12 h) |
 
 The messaging platform choice is the largest recurring cost line. Everything else is small
@@ -202,8 +208,8 @@ relative to the RM 800/month the role currently costs.
 
 | Risk | Mitigation |
 |------|------------|
-| PushPress API is read-only for classes (confirmed from the SDK) | Design accepts it: agent prepares the change list, human or Playwright applies it; revisit if PushPress ships write endpoints or exposes its AI Assistant programmatically |
-| Platform assumption wrong (still PerfectGym, or something else) | Phase 0 confirms before any build; the booking adapter is the only component that changes |
+| Sentinel has no public API and Scope may decline or delay access | Phase 0 starts with the request; the export-based path needs only Sentinel's own scheduled reports; the browser path is the stopgap. The Sentinel adapter is the only component that changes between paths |
+| Sentinel data leaves Malaysia (AWS, possibly Mumbai) and now also flows to the agent | Already the case with Sentinel itself; the agent adds the model API. Keep member personal data out of prompts entirely; the agent needs class-level counts, not member names, for everything except cover notifications |
 | Instructors ignore a bot | Messages come from a named LUF number with a human name on it; the human owner steps in after two ignored chases; instructors learn the bot is the fastest way to get paid correctly |
 | Agent publishes a wrong timetable | Nothing publishes without human approval; every publish has a diff against last week; the previous week's change list is kept so a rollback is one more change list |
 | Confidentiality breach | Rates and phone numbers never leave LUF systems except to the model API under Anthropic's data terms; no rate is ever shown to another instructor; audit log of every message sent |
@@ -213,11 +219,11 @@ relative to the RM 800/month the role currently costs.
 
 ## 7. What is needed from Level Up Fitness to start
 
-1. Confirmation that PushPress is the live platform, and a PushPress v3 API key for the pilot club.
+1. An introduction to LUF's contact at Scope Software Solutions so the API or export request can go out in week 1, and a copy of any existing Sentinel report exports you already receive.
 2. Current instructor roster with programmes, certifications, availability and approved rates, in a sheet the agent can read.
 3. A named human owner for approvals (Club Manager at the pilot club, or Kenny for the pilot).
 4. A messaging decision: WhatsApp (needs Meta Business Verification and a fresh number) or Telegram (free, instant).
 5. Confirmation of the pay model in force (flat per class vs booking-tiered) and the current rate table.
-6. Which class types in PushPress are PT-led and therefore out of scope.
+6. Which class types in Sentinel are PT-led and therefore out of scope.
 7. Decision on whether the pilot runs alongside the current coordinator for the first 4 weeks (recommended) or replaces the role from day one.
-8. Which club pilots. The 2022 JD is City Mall KK; LUF now has many outlets, and the agent design supports one club per API key.
+8. Which club pilots. The 2022 JD is City Mall KK; LUF now has many outlets, and Corina's current Kuching schedule broadcasts suggest Kuching may be the more active GX operation.

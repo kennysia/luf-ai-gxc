@@ -218,7 +218,7 @@ read in full are marked [F]; the rest are snippet-derived.
 
 - **Everything deployed today is member-facing.** No vendor or case study was found where an AI agent handles instructor sub coverage, weekly availability or roster confirmation. Staff coordination is still done with conventional workflow tools or human virtual assistants. An LLM-driven instructor coordinator would be novel. [S]
 - ABC Fitness acquired Replify (July 2026) for agentic lead handling; earlier shipped an AI churn predictor and AI workout builder. Reported results (10x leads, 65% of call volume automated) are vendor claims. [S/U] (Sources 61, 62)
-- **PushPress AI Assistant** (controlled beta late 2025, wider rollout 2026): plain-text prompts to manage plans and book recurring classes for review. No quantified results. [S] (Source 65)
+- PushPress (a US platform, not LUF's) shipped an AI Assistant in 2025 that books recurring classes from a text prompt. It is the closest example of a booking platform exposing scheduling to an agent, and a useful reference when asking Scope what Sentinel could offer. [S]
 - Les Mills corporate uses AI for churn-propensity targeting and instructor discovery (Les Mills Connect lists instructors by programme, location and teaching availability with verified certification). [S] (Source 74)
 - Staff-side non-AI tools worth copying: **ClassSub** shows a manager "coverage health" (share of classes covered 24 h or more ahead, still-open requests) and per-instructor cover rate, confirmed rate and no-shows, and is pitched explicitly as the cure for "group-chat chaos". **GroupEx PRO** runs sub requests through an approval workflow with cost-per-head reporting. [S] (Sources 18, 19 in this section's list: 72, 73)
 
@@ -240,19 +240,39 @@ Cost sketch for 30-40 instructors: one weekly availability template, confirmatio
 - Open-source precedents: an aiogram 3 bot using Claude plus PostgreSQL and Google Sheets sync with role-based access and a shift-management module [F] (Source 76); a weekly recurring reminder bot [F] (Source 77).
 - Downside: instructors must install a second app. In Malaysia WhatsApp is near-universal; Telegram adoption is decent but not guaranteed.
 
-### 7.3 Level Up Fitness's booking platform
+### 7.3 Level Up Fitness's booking platform: Sentinel Fitness (Scope Software Solutions)
 
-**Finding: PushPress, high confidence but not directly verified.** The Google Play package for the Level Up Fitness app is `com.pushpress.levelupfitness`, the naming pattern of PushPress's white-label branded member app, and search snippets of `members.levelupfitness.com` describe it as a PushPress client portal. The 2022 briefing notes reference PerfectGym (`levelup.perfectgym.pl`), so LUF appears to have migrated between 2023 and 2026. The sandbox proxy blocked direct reads of both domains; Kenny can confirm in seconds. (Sources 63, 64)
+**Correction.** An earlier pass attributed the member portal to PushPress on the strength of a Google
+Play package id; that package belongs to an unrelated US gym. Kenny has confirmed the live system is
+**Sentinel** ("Sentinel Scope"), and a third research pass established the following. Vendor and
+app-store pages were blocked by the sandbox proxy, so facts are snippet-level unless marked DNS-verified.
 
-**PushPress Platform API v3** (primary source: the TypeScript SDK README v1.15.0, April 2026, read in full [F]) (Sources 78-80)
-- Base `https://api.pushpress.com/v3`, OpenAPI 3.1, `API-KEY` plus `company-id` headers (one key per location for multi-site gyms). TypeScript and PHP SDKs.
-- **Read endpoints** that matter: `classes.list/get`, `classes.type.list/get`, `reservations.list/get` (bookings), `checkins.class.list/get` (attendance), `checkins.count`, `customers.*`, `enrollment.*`, `events.*`, `company.get`.
-- **Outbound messaging endpoints**: `messages.email.send`, `messages.sms.send`, `messages.push.send`. The agent can notify booked members through PushPress itself.
-- **Webhooks**: signed JSON for `checkin.created/updated/deleted`, `class.canceled`, `reservation.created`, `appointment.noShowed`, `customer.*`, `enrollment.created`.
-- **Gaps that shape the design**: no write endpoints for classes, coach assignment or reservations. The agent can read the schedule and bookings but cannot create a class, reassign a coach or cancel a class via API. No waitlist endpoint found. Whether the Class object exposes coach and capacity is unverified (docs page blocked). Zapier and PushPress Grow add triggers ("Class Registered", "Late Cancel") but no "set coach" action.
-- PushPress AI Assistant can already book recurring classes from a text prompt, which may become a semi-official publishing path if PushPress exposes it programmatically.
+- **Product and vendor**: Sentinel Fitness by Scope Software Solutions LLC, Dubai, UAE (contact
+  domain scopesoftware.co.uk). Hosted tenants live at `<club>.sentinelscope.com`; LUF's tenant
+  `levelup.sentinelscope.com` resolves (DNS-verified). Hosting is AWS, with at least one tenant in
+  Mumbai. Other customers include Fitness First MENA and Warehouse Gym UAE. Not a Malaysian vendor.
+- **History**: LUF used PerfectGym from 2015 (PerfectGym publishes a Level Up case study) and
+  migrated to Sentinel around July 2025, when the new apps were released. `levelup.perfectgym.pl`
+  still resolves, so the old tenant may not be decommissioned.
+- **Apps** (developer Scope Software Solutions LLC): My Level Up for members (Play `scope.levelup`,
+  App Store 6748651657, first release 19 July 2025): book PT and GX classes, cardless entry, feedback,
+  cancellation requests. Level Up Trainers for staff (Play `scope.leveluptrainers`, App Store
+  6748913080): manage classes and bookings, booking lists, **waiting lists**, add members to classes,
+  act on bookings.
+- **GX feature set** (vendor feature list, snippet): booking calendar for PT and GX, GX timetable in
+  the member portal, employee database for PT and GX staff, attendance for GX classes, class
+  efficiency reports, "data extract for commission purposes", scheduled and ad hoc reports,
+  email and SMS campaigns and alerts. Not found: late-cancel or no-show penalty features, digital
+  signage export, WhatsApp, push notification detail.
+- **API**: the vendor feature list mentions an "API for custom look and feel" and integrations to
+  payment gateways and accounting packages. Keepme and FitnessKPI list Sentinel as an integration
+  source, which implies a partner API exists. **No public developer documentation, endpoint list or
+  webhook documentation exists anywhere in the search index.** No Zapier, Make or n8n connector.
+  Any integration is a request to Scope, not self-serve.
 
-Consequence: **publishing the weekly timetable and assigning instructors stays a browser or manual step** until PushPress adds write endpoints. The agent prepares the exact change list; a human (or a Playwright script under the human's login) applies it in PushPress Core. Everything else in the proposal (reading, analytics, cover routing, member notification, payroll) is API-supported.
+**Consequence for the design.** The agent cannot assume an API. Phase 0 must ask Scope for API or
+export access, and the design must work with what is certainly available: scheduled report exports
+(email or CSV), the trainer app, and the web portal. See the revised proposal sections 2 and 4.
 
 ### 7.4 Google Workspace and low-code backends
 
@@ -272,9 +292,9 @@ Consequence: **publishing the weekly timetable and assigning instructors stays a
 
 61. https://abcfitness.com/press-release/abc-fitness-acquires-replify-agentic-ai/ - ABC acquires Replify. [S]
 62. https://abcfitness.com/abc-articles/abc-ai-agents/ - ABC AI agents. [S]
-63. https://play.google.com/store/apps/details?id=com.pushpress.levelupfitness - Level Up Fitness app package id. [S, blocked]
-64. https://members.levelupfitness.com/ - LUF client portal. [blocked]
-65. https://www.pushpress.com/blog/2025-the-year-pushpress-hit-a-pr - PushPress AI Assistant. [S]
+63. https://play.google.com/store/apps/details?id=scope.levelup and ?id=scope.leveluptrainers - My Level Up and Level Up Trainers apps by Scope Software Solutions. [S, blocked]
+64. https://members.levelupfitness.com/ and https://levelup.sentinelscope.com/ - LUF portal and Sentinel tenant. [DNS-verified, pages blocked]
+65. https://scopesoftwareonline.com/service/sentinel-fitness/ - Sentinel Fitness feature list. [S, blocked]
 66. https://whautomate.com/whatsapp-business-api-pricing-malaysia - WhatsApp Malaysia rates. [S]
 67. https://developers.facebook.com/documentation/business-messaging/whatsapp/pricing - Meta pricing. [P, blocked]
 68. https://respond.io/blog/whatsapp-pricing-change-2026 - October 2026 pricing change. [S]
@@ -287,9 +307,9 @@ Consequence: **publishing the weekly timetable and assigning instructors stays a
 75. https://core.telegram.org/bots/api - Telegram Bot API. [P]
 76. https://github.com/Udalovski/ai-recruitment-telegram-bot - aiogram + Claude + Sheets bot. [F]
 77. https://github.com/zavidnyi/telegram-scheduler-bot - recurring reminder bot. [F]
-78. https://www.npmjs.com/package/@pushpress/pushpress - PushPress TypeScript SDK README v1.15.0. [F]
-79. https://ppe.apidocumentation.com/ - PushPress API docs. [blocked]
-80. https://github.com/api-evangelist/pushpress - PushPress API profile. [F]
+78. https://www.keepme.ai/integrations/sentinel/ - Keepme lists Sentinel as an integration. [S]
+79. https://fitness-kpi.com/integrations/sentinel/ - FitnessKPI lists Sentinel as a data source. [S]
+80. https://www.perfectgym.com/en/case-studies/level-up - PerfectGym case study on Level Up (partner since 2015). [S]
 81. https://gist.github.com/estevecastells/08ffa9064b57ab34a622dee16c32b629 - Claude from Apps Script. [F]
 82. https://developers.google.com/apps-script/guides/services/quotas - Apps Script quotas. [P]
 83. https://n8n.io/workflows/16482-book-reschedule-and-confirm-whatsapp-appointments-with-claude-and-sheets - n8n WhatsApp + Claude + Sheets template. [S]

@@ -70,7 +70,7 @@ These become the agent's policy table. Every one of them is currently held in so
 7. **Credentials are written in the briefing notes** (Fitbox Virtual login). They should be rotated and never enter any AI system's prompt or storage.
 8. **"Performance" is undefined.** The JD says optimise bookings and attendance but sets no target. The proposal defines a baseline KPI set (fill rate, attendance rate, no-show rate, late-cancel rate, cost per attendee) so the agent has something to optimise against.
 9. **Scope exclusion.** PT-led small-group classes are out of scope (2026 agreement). The agent must be able to tag and ignore those class types in the booking system's data.
-10. **Booking platform has changed since the notes were written.** The 2022 notes point to PerfectGym (`levelup.perfectgym.pl`). Research in `02-industry-research.md` section 7.3 indicates the current member portal and app run on PushPress. Every "upload to PGM" step in the notes now means PushPress Core, whose public API is read-only for classes. Kenny should confirm which platform is live.
+10. **Booking platform has changed since the notes were written.** The 2022 notes point to PerfectGym (`levelup.perfectgym.pl`). Kenny has confirmed the live system is now Sentinel (Sentinel Fitness by Scope Software Solutions, tenant `levelup.sentinelscope.com`, apps released July 2025). Every "upload to PGM" step in the notes now means Sentinel. Sentinel has no public API documentation, which is the single biggest constraint on the design (see `02-industry-research.md` section 7.3).
 
 ## 4. What the coordinator is not
 
