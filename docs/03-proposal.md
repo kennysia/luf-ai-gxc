@@ -156,6 +156,11 @@ Weekly dashboard, sent Monday morning before the availability ask so the human c
 This is the piece that directly serves the JD's "optimise bookings and attendance" and Kenny's
 rule "retire an underperforming slot before adding a new one".
 
+Any low-performing class, slot or instructor it flags goes through the quarterly review in
+`06-low-performance-review.md` (Kenny, 11 Oct 2026). A recommendation to retire a slot is drafted in week 11 of that cycle,
+after the slot's intervention has run, never on first sight. The agent drafts; the coordinator signs and Kenny approves
+removals.
+
 ### W5. Instructor quality (QCC) support
 
 - Maintain the audit calendar: every active instructor audited at least twice a year, new instructors at weeks 2 and 8.

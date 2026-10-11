@@ -7,7 +7,7 @@ Yong (GX Coordinator Kuching, Oct 2024 to date). Coverage: 1 Sep 2018 to 20 Sep 
 
 ## How to read this
 
-- **Identity note.** `cspyong@levelupfitness.com` returns nothing. Corina's addresses are `cspyong@yahoo.com` (receives policy mail, is LMAP's contact) and `corinayongsiawping@gmail.com` (sends the weekly timetables). Both were scanned.
+- **Identity note.** Corina's company address (`c***@levelupfitness.com`) returns nothing. She uses two personal addresses: `c***@yahoo.com` (receives policy mail, is LMAP's contact) and `c***@gmail.com` (sends the weekly timetables). Both were scanned. The full addresses are kept out of this public repo.
 - **Coverage note.** Jayden's mailbox only existed from about Sep 2023 to Jan 2025 (it now bounces). Corina's threads run 2018 to 2026 because she was an instructor long before she coordinated. Orly's threads cover 2018 to her retirement in March 2023 (section 12).
 - **Attachments were not readable.** Every RM rate table, the 2019 Rules and Policies document, the Class Booking Flow chart and the Sentinel cancellation guide exist only as attachments. Where a figure is quoted here it appeared in an email body.
 - **Status**: Rule = announced as standing policy. Applied = a decision applied to a case, which implies the rule. Proposal = raised but never confirmed in writing.

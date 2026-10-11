@@ -40,7 +40,7 @@ content, but possible) degrades gracefully rather than failing the cron job.
 
 **slots** (the standing weekly template): slot_id, weekday, start, duration, studio, programme, default_instructor_id, capacity, active_from, active_to, seasonal_mode (normal/reduced).
 
-**policy**: key, value, effective_from, source_thread, note. Seeded from `01-source-analysis.md` section 2 and the email register in `05-agreed-gx-policies.md`: draft_send_day=Mon, instructor_change_cutoff=Wed 18:00, publish_deadline=Thu 12:00, booking_open_hours=77, cancel_penalty_hours=2, frontdesk_cancel_hours=1, online_close_hours=1, class_go_min_bookings=3, class_go_check_hours_before=2, cancelled_class_instructor_pay=0, late_entry_grace_minutes=5, member_strikes=3, member_strike_window_weeks=2, member_suspension_days=14, absence_record_retention_weeks=2, grey_capacity_non_equipment=4, grey_capacity_equipment=1, booking_rate_target_pct=70, lesmills_min_classes_per_week=3, lesmills_notice_months=3, trainee_clearance_months=6, free_access_min_classes=2, eligibility_review_months=1,4,7,10, rate_review_months=1,4,7,10, payroll_deadline_day=5, qcc_pass_score=15, mic_company_replace_after_months=12, incentive_budget_per_quarter_rm=300, cover_search_window_hours=6.
+**policy**: key, value, effective_from, source_thread, note. Seeded from `01-source-analysis.md` section 2 and the email register in `05-agreed-gx-policies.md`: draft_send_day=Mon, instructor_change_cutoff=Wed 18:00, publish_deadline=Thu 12:00, booking_open_hours=77, cancel_penalty_hours=2, frontdesk_cancel_hours=1, online_close_hours=1, class_go_min_bookings=3, class_go_check_hours_before=2, cancelled_class_instructor_pay=0, late_entry_grace_minutes=5, member_strikes=3, member_strike_window_weeks=2, member_suspension_days=14, absence_record_retention_weeks=2, grey_capacity_non_equipment=4, grey_capacity_equipment=1, booking_rate_target_pct=70, lesmills_min_classes_per_week=3, lesmills_notice_months=3, trainee_clearance_months=6, free_access_min_classes=2, eligibility_review_months=1,4,7,10, rate_review_months=1,4,7,10, payroll_deadline_day=5, qcc_pass_score=15, mic_company_replace_after_months=12, incentive_budget_per_quarter_rm=300, cover_search_window_hours=6. From `06-low-performance-review.md` (Kenny, 11 Oct 2026): review_quarter_start_months=11,2,5,8, review_cycle_weeks=13, band_green_min_avg=10, band_red_below_avg=6, band_min_occurrences=6, removal_min_occurrences=8, red_removal_weeks_below=8, red_removal_window_weeks=12, rising_hold_weeks=4, incubator_weeks=8, intervention_min_weeks=6, nil_booking_review_weeks=2, licence_cost_per_attendance_ceiling_rm=10, instructor_notice_weeks=3, member_final_notice_weeks=2, regulars_min_attendances=4, post_removal_tracking_weeks=8, reinstate_review_regulars_lost_pct=33, instructor_min_classes_assessed=8.
 
 **weeks**: week_start, status (draft/approved/published), approved_by, approved_at, published_at, diff_from_prev.
 
@@ -56,7 +56,10 @@ content, but possible) degrades gracefully rather than failing the cron job.
 
 | When | Job |
 |------|-----|
-| Mon 08:00 | KPI dashboard for the prior week to the human owner |
+| Mon 08:00 | KPI dashboard for the prior week to the human owner, with the weekly headcount of Red and Amber slots |
+| 1st working day of month 07:00 | Slot scoring and bands (`06-low-performance-review.md`, SOP-1) |
+| Week 1 of each review quarter (from 1 Nov, 1 Feb, 1 May, 1 Aug) | Publish bands; open a file for each Red slot |
+| Week 11 of each review quarter | Review pack: keep, move or remove drafts for each Red slot, sent for approval |
 | Mon 10:00 | Availability ask to each instructor for the week after next |
 | Tue 18:00 | Chase non-responders |
 | Wed 09:00 | Draft timetable, validate, send for approval |
