@@ -102,7 +102,9 @@ Phase 0 must establish:
 
 ## Security and confidentiality
 
-- Instructor rates and phone numbers are stored only in LUF's Google Workspace / database. Prompts receive instructor IDs and first names plus the minimum fields the task needs; rates enter the prompt only for the payroll job.
+- Member names and membership numbers (GX regulars), instructor names and pay rates live in a private repository and are published only on a GX dashboard behind Cloudflare Access, built like the leadership and PT dashboards (Kenny, 11 Oct 2026). Coordinators see pay rates. Each region's view has its own data file, because Access guards an address, not parts of a page: a coordinator sees their own region's members, instructors and rates. Nothing else personal is published: no phone, email, IC number, date of birth or bank details.
+- None of that data goes into this repository, which is public.
+- Instructor phone numbers stay in LUF's database for messaging and are never published. Prompts receive the minimum fields a task needs; rates enter the prompt only for payroll and cost-per-attendance jobs.
 - API keys and Sentinel credentials live in n8n's credential store or environment variables, never in a sheet or a prompt. The Fitbox Virtual credentials written in the 2022 briefing notes should be rotated.
 - Every outbound message and every publish action is logged with who approved it.
 - Model calls go to the Claude API under Anthropic's commercial data terms (30-day retention on current models). If LUF requires zero retention, confirm eligibility with Anthropic before phase 1.
