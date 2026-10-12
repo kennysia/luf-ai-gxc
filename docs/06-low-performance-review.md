@@ -10,16 +10,19 @@ approves every removal (design principle 3 in `03-proposal.md`).
 
 ## 1. The cycle
 
-Quarters run from 1 Nov 2026: 1 Nov to 31 Jan, 1 Feb to 30 Apr, 1 May to 31 Jul, 1 Aug to 31 Oct.
+Cycles are calendar quarters (1 Jan, 1 Apr, 1 Jul, 1 Oct), so each rate and free-access review in those months has a full
+quarter's bands behind it. The first cycle is short: 1 Nov to 31 Dec 2026 (9 weeks). The week numbers below are for a 13-week
+quarter; in the short cycle the first two steps keep their weeks and the last three count back from the end (the review pack
+in the last 3 weeks, the notices in the last 2).
 
 | Week | Step | Who |
 |---|---|---|
 | 1 | Score every slot and assign its band (section 3). Publish the bands to the coordinators, and to each instructor for their own slots. | Agent drafts, coordinator checks |
 | 2 | Red slots marked "Under review" on the timetable and announced in class. Regulars of each Red slot identified. One intervention chosen per Red and Amber slot (SOP-2). | Coordinator with the instructor |
-| 2-10 | Interventions run. Weekly headcount of Red and Amber slots in the Monday KPI report. | Agent tracks |
-| 11 | Review pack: each Red slot drafted as keep, move or remove, with its evidence. Coordinator signs, Kenny approves removals. Instructors affected told in writing the same week. | Agent drafts, people decide |
-| 12 | Next quarter's timetable published. Final notice to members of removed or moved slots. Personal messages to regulars with no other GX class. | Coordinator, club manager |
-| 13 | Last classes of removed slots. | |
+| 3 to 10 | Interventions run. Weekly headcount of Red and Amber slots in the Monday KPI report. | Agent tracks |
+| 11 (the last 3 weeks) | Review pack: each Red slot drafted as keep, move or remove, with its evidence. Coordinator signs, Kenny approves removals. Instructors affected told in writing the same week. | Agent drafts, people decide |
+| 12 (the last 2 weeks) | Next quarter's timetable published. Final notice to members of removed or moved slots. Personal messages to regulars with no other GX class. | Coordinator, club manager |
+| 13 (the last week) | Last classes of removed slots. | |
 | Next week 1 | New timetable live. New slots enter the incubator. | |
 
 Members of a Red slot get about 11 weeks of warning in total: "Under review" from week 2, then the final notice in week 12.
@@ -114,7 +117,11 @@ passes per regular of the nearest full class, and the waitlist on from day one. 
 
 ## 7. Data it depends on
 
-- GX Class Detail (one row per booking) every month, and Studio every week, from the scheduled Sentinel exports.
-- Member-level check-ins, used for the attendance correction before they are reduced to counts.
+- GX Class Detail (one row per booking) and Studio (one row per class) every week and every month, plus GX Class
+  Summary and the Cancelled Event List monthly, from the scheduled Sentinel exports.
+- Member-level check-ins, used for the attendance correction before they are reduced to counts: the result is a ledger
+  per month (one row per booking outcome, membership number, no name) that the scoring reads.
+- The review sheet: a shared Google Sheet with one row per slot and quarter (cause, intervention, decision, dates, who
+  signed), exported read-only for each build. The dashboard shows the rules' suggestions beside the decisions.
 - Regulars lists name members, so they live only on the private GX dashboard behind Cloudflare Access, never in this repo
   (section "Security and confidentiality" in `04-implementation-notes.md`).
